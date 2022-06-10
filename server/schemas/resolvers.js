@@ -23,10 +23,51 @@ const resolvers = {
            .select('-__v -password')
            .populate('savedBooks')
        },
-    //    books: async (parent, { username }) => {
-    //        const params = username ? {username} : {};
-    //        return Book.find
-    //    }
+    },
+    Mutation:{
+        addUser: async (paret, args) => {
+             //Here, the Mongoose User model creates a new user in the database with whatever is passed in as the args
+             const user = await User.create(args)
+             const token = signToken(user)
+             return { user, token}
+        },
+        login: async(parent, { email, password}) => {
+            const user = await User.findOne({email})
+
+            if(!user){
+                throw new AuthenticationError('Incorrect credentials')
+            }
+            const correctPw = await user.isCorrectPassword(password)
+            if(!correctPw){
+                throw new AuthenticationError('Incorrect Credentials')
+            }
+            const token = signToken(user)
+
+            return { user, token}
+        },
+        saveBook: async (parent, { bookData }, context) => {
+            if(context.user){
+                const updateUser = await User.findByIdAndUpdate(
+                    { _id: context.user._id},
+                    {$push: { savedBooks: bookData}},
+                    { new: true}
+                )
+                return updateUser
+            }
+        },
+
+        removeBook: async (parent, { bookId}, context ) => {
+            if(context.user){
+                const  updateUser = await User.findOneAndUpdate(
+                    {_id: context.user._id},
+                    {$pull: { savedBooks: { bookId}}},
+                    {new: true}
+                )
+                return updateUser
+            }
+            throw new AuthenticationError(" You must be logged in to remove book")
+    
+        }
     }
 }
 
