@@ -16,12 +16,12 @@ const resolvers = {
         users: async() => {
             return User.find()
             .select('-__v -password')
-            .populate('savedBooks')
+            // .populate('savedBooks')
         },
        user: async (parent, {username}) => {
            return User.findOne({username})
            .select('-__v -password')
-           .populate('savedBooks')
+        //    .populate('savedBooks')
        },
     },
     Mutation:{
@@ -51,7 +51,9 @@ const resolvers = {
                     { _id: context.user._id},
                     {$push: { savedBooks: bookData}},
                     { new: true}
+    
                 )
+                console.log(updateUser)
                 return updateUser
             }
         },
