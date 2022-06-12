@@ -11,29 +11,34 @@ const SavedBooks = () => {
 
   const { loading, data } = useQuery(GET_ME);
 
-  const userData = data?.me || []
-
   const [deleteBook, { error }] = useMutation(REMOVE_BOOK)
+
+  const userData = data?.me || []
+  console.log(userData)
+
 
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    const token = Auth.loggedIn() ? Auth.getToken() : null
 
     if (!token) {
       return false;
     }
 
     try {
-      const response = await deleteBook({
+      const { data } = await deleteBook({
         variables: { bookId}
-      });
 
-      if (!response.ok) {
+      });
+    
+      console.log(data)
+
+      if (error) {
         throw new Error('something went wrong!');
       }
 
-      const updatedUser = await response.json();
+      // const updatedUser = await response.json();
 
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
