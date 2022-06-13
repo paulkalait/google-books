@@ -36,7 +36,9 @@ const SignupForm = () => {
         const { data } = await addUser({
           variables: {...userFormData}
         })
+        
         //take then token and set it to localStorage
+        console.log('data.addUser.token', data.addUser.token )
         Auth.login(data.addUser.token)
         
         console.log(data)

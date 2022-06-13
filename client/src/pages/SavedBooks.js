@@ -29,13 +29,15 @@ const SavedBooks = () => {
     try {
       const { data } = await deleteBook({
         variables: { bookId}
-
       });
-    
+      console.log("ID OF THE BOOK", bookId)
       console.log(data)
 
       if (error) {
         throw new Error('something went wrong!');
+      }else{
+        window.alert('Book Successfully Deleted')
+        window.location.assign('/saved');
       }
 
       // const updatedUser = await response.json();
