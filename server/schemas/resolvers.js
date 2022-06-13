@@ -41,12 +41,13 @@ const resolvers = {
             if(!correctPw){
                 throw new AuthenticationError('Incorrect Credentials')
             }
+            console.log("user:", user)
             const token = signToken(user)
 
             return { user, token}
         },
         saveBook: async (parent, { bookData }, context) => {
-            console.log("saveBook")
+            console.log("context", context.user)
             if(context.user){
                 console.log("updateuser:")
                 const updateUser = await User.findByIdAndUpdate(
